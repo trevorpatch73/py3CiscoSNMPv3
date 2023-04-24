@@ -11,12 +11,12 @@ secret = os.environ.get('CISCO_SECRET')
 
 # Define the SNMPv3 configuration
 snmp_config = {
-    'community': 'public',
-    'username': 'snmpuser',
-    'auth_protocol': 'sha',
+    'community': os.environ.get('SNMPv3_GROUP_COMMUNITY'),
+    'username': os.environ.get('SNMPv3_USERNAME'),
+    'auth_protocol': os.environ.get('SNMPv3_AUTH_PROTOCOL'),
     'auth_password': os.environ.get('SNMPv3_AUTH_PASSWORD'),
-    'priv_protocol': 'aes128',
-    'priv_bits': '128',
+    'priv_protocol': os.environ.get('SNMPv3_PRIV_PROTOCOL'),
+    'priv_bits': os.environ.get('SNMPv3_PRIV_BITS'),
     'priv_password': os.environ.get('SNMPv3_PRIV_PASSWORD'),
 }
 
@@ -44,10 +44,28 @@ with open('CISCO-SNMPv3-INVENTORY.csv', 'r') as file:
                 'snmp-server group {} v3 priv read ViewDefault'.format(snmp_config['community']),
                 'snmp-server user {} {} v3 auth {} {} priv {} {} {}'.format(snmp_config['username'], snmp_config['community'], snmp_config['auth_protocol'], snmp_config['auth_password'], snmp_config['priv_protocol'], snmp_config['priv_bits'], snmp_config['priv_password']),
             ]
+
+            # Establish a connection to the device
+            with ConnectHandler(**device) as conn:
+                # Send the SNMPv3 configuration commands to the device
+                output = conn.send_config_set(commands)
+
+                # Print the output of the commands
+                print(output)
+
         elif device['device_type'] == 'NXOS':
             commands = [
                 'snmp-server user {} network-admin v3 auth {} {} priv {}-{} {}'.format(snmp_config['username'], snmp_config['auth_protocol'], snmp_config['auth_password'], snmp_config['priv_protocol'], snmp_config['priv_bits'], snmp_config['priv_password']),
             ]
+
+            # Establish a connection to the device
+            with ConnectHandler(**device) as conn:
+                # Send the SNMPv3 configuration commands to the device
+                output = conn.send_config_set(commands)
+
+                # Print the output of the commands
+                print(output)
+
         elif device['device_type'] == 'FXOS':
             commands = [
                 'scope monitoring',
@@ -59,11 +77,29 @@ with open('CISCO-SNMPv3-INVENTORY.csv', 'r') as file:
                 '{}'.format(snmp_config['priv_password']),
                 'commit-buffer',
             ]
+
+            # Establish a connection to the device
+            with ConnectHandler(**device) as conn:
+                # Send the SNMPv3 configuration commands to the device
+                output = conn.send_config_set(commands)
+
+                # Print the output of the commands
+                print(output)
+
         elif device['device_type'] == 'ASA':
             commands = [
                 'snmp-server group {} v3 priv read ViewDefault'.format(snmp_config['community']),
                 'snmp-server user {} {} v3 auth {} {} priv {} {} {}'.format(snmp_config['username'], snmp_config['community'], snmp_config['auth_protocol'], snmp_config['auth_password'], snmp_config['priv_protocol'], snmp_config['priv_bits'], snmp_config['priv_password']),
             ]
+
+            # Establish a connection to the device
+            with ConnectHandler(**device) as conn:
+                # Send the SNMPv3 configuration commands to the device
+                output = conn.send_config_set(commands)
+
+                # Print the output of the commands
+                print(output)
+
         elif device['device_type'] == 'ACI':
         
             # Define variables from environmental variables
